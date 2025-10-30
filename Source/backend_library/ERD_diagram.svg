@@ -1,0 +1,84 @@
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Title -->
+  <text x="400" y="30" text-anchor="middle" font-size="24" font-weight="bold" fill="#333">
+    Library Management System - ERD
+  </text>
+  
+  <!-- Users Table -->
+  <g>
+    <rect x="50" y="80" width="220" height="200" fill="#4A90E2" stroke="#333" stroke-width="2" rx="5"/>
+    <text x="160" y="105" text-anchor="middle" font-size="18" font-weight="bold" fill="white">Users</text>
+    <line x1="50" y1="115" x2="270" y2="115" stroke="white" stroke-width="2"/>
+    <text x="60" y="135" font-size="14" fill="white">🔑 id: INTEGER (PK)</text>
+    <text x="60" y="155" font-size="14" fill="white">   username: STRING</text>
+    <text x="60" y="175" font-size="14" fill="white">   email: STRING (UNIQUE)</text>
+    <text x="60" y="195" font-size="14" fill="white">   password: STRING</text>
+    <text x="60" y="215" font-size="14" fill="white">   role: ENUM</text>
+    <text x="60" y="235" font-size="12" fill="#E0E0E0">   createdAt, updatedAt</text>
+  </g>
+  
+  <!-- Books Table -->
+  <g>
+    <rect x="530" y="80" width="220" height="220" fill="#50C878" stroke="#333" stroke-width="2" rx="5"/>
+    <text x="640" y="105" text-anchor="middle" font-size="18" font-weight="bold" fill="white">Books</text>
+    <line x1="530" y1="115" x2="750" y2="115" stroke="white" stroke-width="2"/>
+    <text x="540" y="135" font-size="14" fill="white">🔑 id: INTEGER (PK)</text>
+    <text x="540" y="155" font-size="14" fill="white">   title: STRING</text>
+    <text x="540" y="175" font-size="14" fill="white">   author: STRING</text>
+    <text x="540" y="195" font-size="14" fill="white">   category: STRING</text>
+    <text x="540" y="215" font-size="14" fill="white">   description: TEXT</text>
+    <text x="540" y="235" font-size="14" fill="white">   coverImage: STRING</text>
+    <text x="540" y="255" font-size="14" fill="white">   stock: INTEGER</text>
+    <text x="540" y="275" font-size="12" fill="#E0E0E0">   createdAt, updatedAt</text>
+  </g>
+  
+  <!-- Borrows Table (Junction) -->
+  <g>
+    <rect x="290" y="350" width="220" height="200" fill="#FF6B6B" stroke="#333" stroke-width="2" rx="5"/>
+    <text x="400" y="375" text-anchor="middle" font-size="18" font-weight="bold" fill="white">Borrows</text>
+    <line x1="290" y1="385" x2="510" y2="385" stroke="white" stroke-width="2"/>
+    <text x="300" y="405" font-size="14" fill="white">🔑 id: INTEGER (PK)</text>
+    <text x="300" y="425" font-size="14" fill="white">🔗 userId: INTEGER (FK)</text>
+    <text x="300" y="445" font-size="14" fill="white">🔗 bookId: INTEGER (FK)</text>
+    <text x="300" y="465" font-size="14" fill="white">   borrowDate: DATE</text>
+    <text x="300" y="485" font-size="14" fill="white">   dueDate: DATE</text>
+    <text x="300" y="505" font-size="14" fill="white">   returnDate: DATE</text>
+    <text x="300" y="525" font-size="14" fill="white">   status: ENUM</text>
+  </g>
+  
+  <!-- Relationships -->
+  <!-- Users to Borrows -->
+  <g>
+    <line x1="160" y1="280" x2="160" y2="320" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="160" y1="320" x2="340" y2="350" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <text x="170" y="300" font-size="12" fill="#333">1</text>
+    <text x="320" y="340" font-size="12" fill="#333">N</text>
+    <text x="200" y="310" font-size="12" fill="#555" font-style="italic">has many</text>
+  </g>
+  
+  <!-- Books to Borrows -->
+  <g>
+    <line x1="640" y1="300" x2="640" y2="330" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="640" y1="330" x2="460" y2="350" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <text x="650" y="320" font-size="12" fill="#333">1</text>
+    <text x="470" y="340" font-size="12" fill="#333">N</text>
+    <text x="550" y="310" font-size="12" fill="#555" font-style="italic">has many</text>
+  </g>
+  
+  <!-- Legend -->
+  <g>
+    <rect x="50" y="560" width="700" height="30" fill="#F5F5F5" stroke="#333" stroke-width="1" rx="3"/>
+    <text x="60" y="580" font-size="12" fill="#333">
+      📘 Relationships: Users ↔ Books (Many-to-Many through Borrows) │ 
+      Status: borrowed, returned, overdue │ 
+      Role: admin, user
+    </text>
+  </g>
+  
+  <!-- Arrow marker definition -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#333" />
+    </marker>
+  </defs>
+</svg>

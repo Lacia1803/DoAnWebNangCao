@@ -1,0 +1,773 @@
+openapi: 3.0.0
+info:
+  title: Library Management System API
+  version: 1.0.0
+  description: >-
+    A comprehensive library management system with user authentication, book
+    management, and borrow tracking
+  contact:
+    name: API Support
+    email: support@library.com
+servers:
+  - url: http://localhost:5000
+    description: Development server
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    UserBrief:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        username:
+          type: string
+          example: john_doe
+        email:
+          type: string
+          example: john@example.com
+    BookBrief:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: Clean Code
+        author:
+          type: string
+          example: Robert C. Martin
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        username:
+          type: string
+          example: john_doe
+        email:
+          type: string
+          example: john@example.com
+        role:
+          type: string
+          enum:
+            - admin
+            - user
+          example: user
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    Book:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: The Great Gatsby
+        author:
+          type: string
+          example: F. Scott Fitzgerald
+        category:
+          type: string
+          example: Fiction
+        description:
+          type: string
+          example: A classic American novel
+        coverImage:
+          type: string
+          example: /uploads/book1.jpg
+        stock:
+          type: integer
+          example: 5
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    Borrow:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        userId:
+          type: integer
+          example: 1
+        bookId:
+          type: integer
+          example: 1
+        borrowDate:
+          type: string
+          format: date-time
+        dueDate:
+          type: string
+          format: date-time
+        returnDate:
+          type: string
+          format: date-time
+          nullable: true
+        status:
+          type: string
+          enum:
+            - borrowed
+            - returned
+            - overdue
+          example: borrowed
+        overdueReminderSent:
+          type: boolean
+          example: false
+        lastReminderAt:
+          type: string
+          format: date-time
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    BorrowWithRelations:
+      allOf:
+        - $ref: '#/components/schemas/Borrow'
+        - type: object
+          properties:
+            user:
+              $ref: '#/components/schemas/UserBrief'
+            book:
+              $ref: '#/components/schemas/BookBrief'
+    BorrowListResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/BorrowWithRelations'
+    PaginatedBorrowListResponse:
+      type: object
+      properties:
+        borrows:
+          type: array
+          items:
+            $ref: '#/components/schemas/BorrowWithRelations'
+        totalItems:
+          type: integer
+          example: 12
+        totalPages:
+          type: integer
+          example: 2
+        currentPage:
+          type: integer
+          example: 1
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Error message
+        error:
+          type: string
+          example: Detailed error information
+security:
+  - bearerAuth: []
+paths:
+  /api/auth/register:
+    post:
+      summary: Register a new user
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - email
+                - password
+              properties:
+                username:
+                  type: string
+                  example: john_doe
+                email:
+                  type: string
+                  example: john@example.com
+                password:
+                  type: string
+                  example: password123
+                role:
+                  type: string
+                  enum:
+                    - admin
+                    - user
+                  example: user
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  token:
+                    type: string
+                  user:
+                    $ref: '#/components/schemas/User'
+        '400':
+          description: User already exists
+        '500':
+          description: Server error
+  /api/auth/login:
+    post:
+      summary: Login user
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  example: admin@library.com
+                password:
+                  type: string
+                  example: admin123
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  token:
+                    type: string
+                  user:
+                    $ref: '#/components/schemas/User'
+        '401':
+          description: Invalid credentials
+        '500':
+          description: Server error
+  /api/auth/verify:
+    get:
+      summary: Verify JWT token and return current user
+      tags:
+        - Authentication
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Token is valid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        $ref: '#/components/schemas/User'
+        '401':
+          description: Invalid or expired token
+  /api/books:
+    get:
+      summary: Get all books with pagination and filtering
+      tags:
+        - Books
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+        - in: query
+          name: sortBy
+          schema:
+            type: string
+            enum:
+              - title
+              - author
+              - createdAt
+              - stock
+            default: createdAt
+        - in: query
+          name: order
+          schema:
+            type: string
+            enum:
+              - ASC
+              - DESC
+            default: DESC
+        - in: query
+          name: search
+          schema:
+            type: string
+        - in: query
+          name: category
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of books
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  books:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Book'
+                  totalItems:
+                    type: integer
+                  totalPages:
+                    type: integer
+                  currentPage:
+                    type: integer
+                  itemsPerPage:
+                    type: integer
+    post:
+      summary: Create new book (Admin only)
+      tags:
+        - Books
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - author
+                - category
+              properties:
+                title:
+                  type: string
+                author:
+                  type: string
+                category:
+                  type: string
+                description:
+                  type: string
+                stock:
+                  type: integer
+                coverImage:
+                  type: string
+      responses:
+        '201':
+          description: Book created successfully
+        '401':
+          description: Unauthorized
+  /api/books/stats/overview:
+    get:
+      summary: Get book statistics
+      tags:
+        - Books
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Book statistics
+  /api/books/{id}:
+    get:
+      summary: Get book by ID
+      tags:
+        - Books
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Book details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '404':
+          description: Book not found
+    put:
+      summary: Update book (Admin only)
+      tags:
+        - Books
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                author:
+                  type: string
+                category:
+                  type: string
+                description:
+                  type: string
+                stock:
+                  type: integer
+                coverImage:
+                  type: string
+      responses:
+        '200':
+          description: Book updated successfully
+        '404':
+          description: Book not found
+    delete:
+      summary: Delete book (Admin only)
+      tags:
+        - Books
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Book deleted successfully
+        '404':
+          description: Book not found
+  /api/books/upload:
+    post:
+      summary: Upload book cover image (Admin only)
+      tags:
+        - Books
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                cover:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: File uploaded successfully
+  /api/books/upload/{filename}:
+    delete:
+      summary: Delete uploaded cover image (Admin only)
+      tags:
+        - Books
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: filename
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: File deleted successfully
+        '404':
+          description: File not found
+  /api/borrows:
+    post:
+      summary: Borrow a book
+      tags:
+        - Borrows
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - bookId
+              properties:
+                bookId:
+                  type: integer
+                  example: 1
+                dueDate:
+                  type: string
+                  format: date-time
+                  description: ISO date; defaults to +14 days if omitted
+      responses:
+        '201':
+          description: Borrow created
+        '400':
+          description: Validation error or business rule violation
+        '404':
+          description: Book not found
+    get:
+      summary: Admin list of all borrows
+      tags:
+        - Borrows
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum:
+              - borrowed
+              - returned
+              - overdue
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Paginated list of borrows
+        '403':
+          description: Admin only
+  /api/borrows/{id}/return:
+    post:
+      summary: Return a borrowed book
+      tags:
+        - Borrows
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Book returned
+        '400':
+          description: Already returned
+        '404':
+          description: Borrow record not found
+  /api/borrows/my:
+    get:
+      summary: Get current user's borrow records
+      tags:
+        - Borrows
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum:
+              - borrowed
+              - returned
+              - overdue
+      responses:
+        '200':
+          description: List of my borrows
+  /api/borrows/overdue:
+    patch:
+      summary: Update overdue borrows (admin)
+      tags:
+        - Borrows
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Updated count returned
+        '403':
+          description: Admin only
+  /api/users:
+    get:
+      summary: Get all users (Admin only)
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+        - in: query
+          name: search
+          schema:
+            type: string
+        - in: query
+          name: role
+          schema:
+            type: string
+            enum:
+              - admin
+              - vip
+              - user
+      responses:
+        '200':
+          description: List of users
+    post:
+      summary: Create new user (Admin only)
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - email
+                - password
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+                role:
+                  type: string
+                  enum:
+                    - admin
+                    - vip
+                    - user
+                  default: user
+      responses:
+        '201':
+          description: User created successfully
+  /api/users/stats:
+    get:
+      summary: Get user statistics (Admin only)
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User statistics
+  /api/users/profile/me:
+    get:
+      summary: Get current user profile
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User profile
+  /api/users/{id}:
+    get:
+      summary: Get user by ID
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User details
+        '404':
+          description: User not found
+    put:
+      summary: Update user
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                role:
+                  type: string
+                  enum:
+                    - admin
+                    - user
+      responses:
+        '200':
+          description: User updated successfully
+    delete:
+      summary: Delete user (Admin only)
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User deleted successfully
+tags: []

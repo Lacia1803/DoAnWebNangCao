@@ -1,0 +1,46 @@
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Env
+.env
+.env.*
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Coverage
+coverage/
+.nyc_output/
+
+# OSX
+.DS_Store
+
+# IDEs
+.vscode/
+.idea/
+
+# Build outputs
+dist/
+build/
+
+# Backend uploads and runtime files
+Source/backend_library/uploads/
+Source/backend_library/logs/
+Source/backend_library/coverage/
+Source/backend_library/node_modules/
+
+# Frontend
+Source/frontend_library/node_modules/
+Source/frontend_library/build/
+
+# Misc
+*.sqlite
+*.sqlite3
+*.db
+
+# Visual Studio Code settings
+.vscode/*

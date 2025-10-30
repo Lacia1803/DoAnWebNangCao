@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="420" viewBox="0 0 900 420">
+  <style>
+    .box { fill:#f8f9fb; stroke:#223; stroke-width:1; }
+    .title { font: bold 14px sans-serif; }
+    .field { font: 12px monospace; }
+    .rel { stroke:#888; stroke-width:1.2; marker-end:url(#arrow); }
+  </style>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L6,3 z" fill="#888" />
+    </marker>
+  </defs>
+
+  <!-- Users -->
+  <rect class="box" x="40" y="30" width="260" height="120" rx="6"/>
+  <text x="54" y="54" class="title">Users</text>
+  <text x="54" y="76" class="field">id (PK)</text>
+  <text x="54" y="96" class="field">username</text>
+  <text x="54" y="116" class="field">email</text>
+  <text x="54" y="136" class="field">role</text>
+
+  <!-- Books -->
+  <rect class="box" x="320" y="30" width="260" height="160" rx="6"/>
+  <text x="334" y="54" class="title">Books</text>
+  <text x="334" y="76" class="field">id (PK)</text>
+  <text x="334" y="96" class="field">title</text>
+  <text x="334" y="116" class="field">author</text>
+  <text x="334" y="136" class="field">bookType (enum: physical|online)</text>
+  <text x="334" y="156" class="field">contentFile (path/url)</text>
+
+  <!-- Borrows -->
+  <rect class="box" x="40" y="200" width="260" height="120" rx="6"/>
+  <text x="54" y="224" class="title">Borrows</text>
+  <text x="54" y="246" class="field">id (PK)</text>
+  <text x="54" y="266" class="field">userId (FK → Users.id)</text>
+  <text x="54" y="286" class="field">bookId (FK → Books.id)</text>
+  <text x="54" y="306" class="field">borrowDate, dueDate, returnDate</text>
+
+  <!-- Favorites -->
+  <rect class="box" x="320" y="220" width="260" height="100" rx="6"/>
+  <text x="334" y="244" class="title">Favorites</text>
+  <text x="334" y="266" class="field">id (PK)</text>
+  <text x="334" y="286" class="field">userId (FK → Users.id)</text>
+  <text x="334" y="306" class="field">bookId (FK → Books.id)</text>
+
+  <!-- Relationships -->
+  <line class="rel" x1="160" y1="150" x2="160" y2="200" />
+  <text x="170" y="178" fill="#444">1..N</text>
+
+  <line class="rel" x1="300" y1="100" x2="320" y2="100" />
+  <text x="290" y="90" fill="#444">1..N</text>
+
+  <line class="rel" x1="200" y1="240" x2="320" y2="240" />
+  <text x="258" y="230" fill="#444">1..N</text>
+
+  <line class="rel" x1="450" y1="280" x2="450" y2="200" />
+  <text x="460" y="240" fill="#444">N..1</text>
+
+</svg>

@@ -1,0 +1,38 @@
+================================================================================
+          LIBRARY MANAGEMENT SYSTEM - GITHUB REPOSITORY
+================================================================================
+
+Repository Name: DoAnWebNangCao
+Owner: Lacia1803
+Branch: master
+
+GitHub Repository URL:
+https://github.com/Lacia1803/DoAnWebNangCao
+
+================================================================================
+
+Hướng dẫn truy cập:
+1. Mở link trên trong trình duyệt
+2. Clone repository: 
+https://github.com/Lacia1803/DoAnWebNangCao
+
+Cấu trúc Repository:
+- /backend_library     : Mã nguồn backend (Node.js + Express + PostgreSQL)
+- /frontend_library    : Mã nguồn frontend (React)
+- /README.md          : Tài liệu hướng dẫn chính
+
+================================================================================
+
+Thông tin liên hệ:
+- Repository: https://github.com/Lacia1803/DoAnWebNangCao
+- Owner: Lacia2808
+- Date Created: October 2025
+
+================================================================================
+
+Lưu ý:
+- Repository hiện đang ở chế độ public
+- Tất cả source code đã được commit và push
+- Xem README.md để biết hướng dẫn cài đặt và chạy dự án
+
+================================================================================

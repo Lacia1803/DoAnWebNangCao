@@ -1,0 +1,145 @@
+.App {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.main-content {
+  padding-top: 20px;
+  min-height: calc(100vh - 56px);
+}
+
+/* Custom Button Styles */
+.btn-primary {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.btn-primary:hover {
+  background-color: #0b5ed7;
+  border-color: #0a58ca;
+}
+
+/* Card Styles */
+.card {
+  border-radius: 10px;
+  transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Charts / Dashboard improvements */
+.charts-card .card-body {
+  padding: 1rem 1.25rem;
+}
+
+.charts-card .card-header {
+  background: rgba(255,255,255,0.02) !important;
+  border-bottom: none !important;
+}
+
+.mini-chart-card {
+  background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+  border-radius: 8px;
+  padding: 0.75rem;
+  box-shadow: 0 2px 10px rgba(18, 38, 63, 0.06);
+}
+
+.charts-legend {
+  font-size: 0.9rem;
+  color: #495057;
+}
+
+/* Improve typography and color harmony */
+body, .App, .main-content {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  color: #2b2f36;
+}
+
+/* Subtle header styling inside cards */
+.card h5 {
+  font-weight: 600;
+  letter-spacing: -0.2px;
+}
+
+/* Responsive tweaks for chart area */
+@media (max-width: 992px) {
+  .charts-card .card-body { padding: 0.5rem; }
+}
+
+/* Dashboard Stats Cards */
+.stats-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+}
+
+.stats-card .card-body {
+  padding: 1.5rem;
+}
+
+.stats-card h3 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+/* Book Cards */
+.book-card {
+  transition: all 0.3s ease;
+  height: 100%;
+}
+
+.book-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.book-image {
+  height: 200px;
+  object-fit: cover;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+/* Form Styles */
+.form-container {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+}
+
+/* Alert Styles */
+.alert {
+  border-radius: 8px;
+}
+
+/* Navbar Brand */
+.navbar-brand {
+  font-size: 1.3rem;
+}
+
+/* Loading Spinner */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .main-content {
+    padding-top: 10px;
+  }
+  
+  .stats-card h3 {
+    font-size: 2rem;
+  }
+  
+  .form-container {
+    padding: 1rem;
+  }
+}
